@@ -1,0 +1,62 @@
+<h1 class="text-center my-4">{{title}}</h1>
+<table class="table table-responsive">
+  <thead>
+  <tr>
+    <th>File name</th>
+    <th>File size</th>
+    <th>Upload date</th>
+    <th>Delete file</th>
+  </tr>
+  </thead>
+  <tbody>
+  {{#each files}}
+    <tr>
+      <td><a href="/download/{{storageName}}">{{name}}</a></td>
+      <td>{{bytes size}}</td>
+      <td>{{moment uploadDate "MMMM Do YYYY, h:mm:ss a"}}</td>
+      <td>
+        <form method="post" action="/delete">
+          <input type="hidden" value="{{id}}" name="id">
+          <button class="btn btn-danger btn-small">Delete</button>
+        </form>
+      </td>
+    </tr>
+  {{/each}}
+  </tbody>
+</table>
+
+<h3 class="py-3">Upload File</h3>
+<form method="post" enctype="multipart/form-data" action="/upload">
+  <div class="form-group">
+    <label class="custom-file">
+      <input type="file" class="custom-file-input" id="file" name="file" required>
+      <span class="custom-file-control"></span>
+    </label>
+  </div>
+  <input type="submit" class="btn btn-primary">
+</form>
+
+{{#section 'javascript'}}
+  <script>
+    $(function () {
+      $('#file').change(function () {
+        $('.custom-file-control').text($(this)[0].files[0].name);
+      });
+      $('form[action="/delete"]').submit(function (e) {
+        e.preventDefault();
+        swal({
+          title: 'Are you sure?',
+          text: 'All trades associated will also be deleted!',
+          icon: 'warning',
+          buttons: true,
+          dangerMode: true,
+        })
+                .then((willDelete) => {
+                  if (willDelete) {
+                    $(this.submit());
+                  }
+                });
+      });
+    });
+  </script>
+{{/section}}

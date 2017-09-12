@@ -1,0 +1,10 @@
+<div id="pagination" class="float-lg-right">
+  {{#isnt pagination.page 1}}
+    <a class="btn btn-info" href="?page={{add -1 pagination.page}}">Previous</a>
+  {{/isnt}}
+  <span class="px-2">Page {{pagination.page}} of {{pagination.pages}}</span>
+  {{#isnt pagination.page pagination.pages}}
+    <a class="btn btn-info" href="?page={{add 1 pagination.page}}">Next</a>
+  {{/isnt}}
+</div>
+<div class="clearfix"></div>

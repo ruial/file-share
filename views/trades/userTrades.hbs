@@ -1,0 +1,91 @@
+<h1 class="text-center my-4">Trade requests sent</h1>
+<table class="table table-responsive">
+  <thead>
+  <tr>
+    <th>File name</th>
+    <th>File size</th>
+    <th>Username</th>
+    <th>Created at</th>
+    <th>Status</th>
+    <th>Action</th>
+  </tr>
+  </thead>
+  <tbody>
+  {{#each outgoingRequests}}
+    <tr>
+      <td>{{file.name}}</td>
+      <td>{{bytes file.size}}</td>
+      <td>{{to}}</td>
+      <td>{{moment createDate "MMMM Do YYYY, h:mm:ss a"}}</td>
+      <td>{{status}}</td>
+      <td>
+        {{#eq status 'Accepted'}}
+          <a class="btn btn-primary btn-small" href="/download/{{file.storageName}}">Download</a>
+        {{else}}
+          <form method="post" action="/trades/cancel">
+            <input type="hidden" value="{{id}}" name="id">
+            <button class="btn btn-danger btn-small">Cancel</button>
+          </form>
+        {{/eq}}
+      </td>
+    </tr>
+  {{/each}}
+  </tbody>
+</table>
+
+<h1 class="text-center my-4">Incoming trade requests</h1>
+<table class="table table-responsive">
+  <thead>
+  <tr>
+    <th>File name</th>
+    <th>File size</th>
+    <th>Username</th>
+    <th>Created at</th>
+    <th>Action</th>
+  </tr>
+  </thead>
+  <tbody>
+  {{#each incomingRequests}}
+    <tr>
+      <td>{{file.name}}</td>
+      <td>{{bytes file.size}}</td>
+      <td>{{from}}</td>
+      <td>{{moment createDate "MMMM Do YYYY, h:mm:ss a"}}</td>
+      <td>
+        <form method="post" action="/trades/decide" class="d-inline">
+          <input type="hidden" value="{{id}}" name="id">
+          <input type="hidden" value="Accepted" name="decision">
+          <button class="btn btn-success btn-small">Accept</button>
+        </form>
+        <form method="post" action="/trades/decide" class="d-inline">
+          <input type="hidden" value="{{id}}" name="id">
+          <input type="hidden" value="Rejected" name="decision">
+          <button class="btn btn-warning btn-small">Reject</button>
+        </form>
+      </td>
+    </tr>
+  {{/each}}
+  </tbody>
+</table>
+
+{{#section 'javascript'}}
+  <script>
+    $(function () {
+      $('form[action="/trades/cancel"]').submit(function (e) {
+        e.preventDefault();
+        swal({
+          title: 'Are you sure?',
+          text: 'You will not be able to request this file again!',
+          icon: 'warning',
+          buttons: true,
+          dangerMode: true,
+        })
+                .then((willDelete) => {
+                  if (willDelete) {
+                    this.submit();
+                  }
+                });
+      });
+    });
+  </script>
+{{/section}}
