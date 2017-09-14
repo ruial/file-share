@@ -1,6 +1,6 @@
 const debug = require('debug')('file-share:userController');
 const User = require('../models/user');
-const Session = require('../models/session');
+const UserSession = require('../models/userSession');
 const email = require('../lib/email');
 
 const REMEMBER_ME_DURATION = 14 * 24 * 60 * 60 * 1000; // 2 weeks, same as connect-mongo default
@@ -32,14 +32,18 @@ exports.login = function (req, res) {
 };
 
 exports.loginSuccess = function (req, res, next) {
-  if (req.body.remember === 'on') {
+  if (req.body.remember) {
     req.session.cookie.maxAge = REMEMBER_ME_DURATION;
   }
   else {
     req.session.cookie.expires = false;
   }
-  req.flash('info', 'You are now logged in');
-  res.redirect(req.body.redirect || '/');
+  const userSession = new UserSession({userId: req.user.id, sessionId: req.sessionID});
+  userSession.save(err => {
+    if (err) return next(err);
+    req.flash('info', 'You are now logged in, ' + req.user.username);
+    res.redirect(req.body.redirect || '/');
+  });
 };
 
 exports.logout = function (req, res) {
@@ -58,7 +62,7 @@ exports.changePassword = {
     user.password = req.body.password;
     user.save(err => {
       if (err) return User.validationErrorHandler(err, req, res, next);
-      Session.clearSessions(user.id, req.sessionID, err => {
+      UserSession.clear(user.id, req.sessionID, err => {
         if (err) debug('Error clearing sessions: %o', err);
         req.flash('success', 'Password changed with success');
         res.redirect('/');
@@ -103,7 +107,7 @@ exports.passwordReset = {
       if (!user) return next(new Error('Token not found'));
       user.resetPassword(password, err => {
         if (err) return User.validationErrorHandler(err, req, res, next);
-        Session.clearSessions(user.id, null, err => {
+        UserSession.clear(user.id, null, err => {
           if (err) return next(err);
           req.flash('success', 'Password changed, try to login');
           res.redirect('/users/login');

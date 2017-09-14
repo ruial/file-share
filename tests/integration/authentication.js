@@ -3,7 +3,7 @@ const request = require('supertest');
 const app = require('../../app');
 const db = require('../../db');
 const User = require('../../models/user');
-const Session = require('../../models/session');
+const UserSession = require('../../models/userSession');
 
 // stub the email to prevent sending it and assert that the methods are called correctly
 const sinon = require('sinon');
@@ -31,8 +31,8 @@ describe('Authentication', () => {
   });
 
   after(done => {
-    const promises = [User.remove(), Session.remove()];
-    Promise.all(promises).then(() => db.disconnect(done));
+    const promises = [User.remove(), UserSession.clearAll()];
+    Promise.all(promises).then(() => db.disconnect(done)).catch(done);
   });
 
 
@@ -72,7 +72,7 @@ describe('Authentication', () => {
       agent.post('/users/login')
         .send({username: 'test', password: '123456'})
         .redirects(1)
-        .expect(/You are now logged in/)
+        .expect(/You are now logged in, test/)
         .end(done);
     });
 
@@ -187,7 +187,7 @@ describe('Authentication', () => {
     beforeEach(done => {
       emailStub = sandbox.stub(email, 'sendPasswordResetEmail');
       testUser = new User({username: 'test-token', email: 'test-token@example.com', password: '123456'});
-      testUser.save((err) => {
+      testUser.save(err => {
         if (err) return done(err);
         login('test-token', '123456', newAgent => {
           agent = newAgent;
@@ -236,7 +236,7 @@ describe('Authentication', () => {
             .send({email: 'test-token@example.com'})
             .redirects(1)
             .end((err, res) => {
-              if(err) return done(err);
+              if (err) return done(err);
               expect(res.text).to.contain('Already sent a reset token to this email recently');
               sinon.assert.calledOnce(emailStub);
               done();

@@ -29,7 +29,7 @@ userSchema.path('country').validate(validate.checkStringLength(2), 'Country need
 
 userSchema.methods.generateToken = function (callback) {
   const date = new Date();
-  if(date < this.resetPasswordExpires) return callback(new Error('Already sent a reset token to this email recently'));
+  if (date < this.resetPasswordExpires) return callback(new Error('Already sent a reset token to this email recently'));
   crypto.randomBytes(TOKEN_LENGTH, (err, buf) => {
     if (err) return callback(err);
     const token = buf.toString('hex');
