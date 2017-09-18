@@ -13,7 +13,7 @@ const Session = mongoose.model('Session', sessionSchema);
 // Collection to help with session invalidation, more efficient than regex search for the userId on the session content
 // To prevent this collection from growing too much, old docs should be removed from time to time
 const userSessionSchema = new mongoose.Schema({
-  userId: {type: String, index: true},
+  userId: {type: mongoose.Schema.Types.ObjectId, ref: 'User', index: true},
   sessionId: String,
   loginDate: {type: Date, default: Date.now}
 }, {versionKey: false});
@@ -22,7 +22,7 @@ const userSessionSchema = new mongoose.Schema({
  * Clears all sessions associated with a userId
  * When userSessionId is defined, it means the user is updating the password, so do not clear his session
  * otherwise the user is not logged in and wants to reset the password, so clear all related sessions
- * @param userId {String}
+ * @param userId {ObjectId|User|String}
  * @param userSessionId {String}
  * @param callback {Function}
  */

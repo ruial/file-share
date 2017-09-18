@@ -35,10 +35,14 @@ exports.allFiles = function (req, res, next) {
 };
 
 exports.remove = function (req, res, next) {
-  File.findById(req.body.id, (err, file) => {
+  File.findOne({_id: req.body.id, author: req.user.username}, (err, file) => {
     if (err) return next(err);
-    if (!file) return next(new Error('File not found'));
-    file.removeFile(req.user.username, err => {
+    if (!file){
+      const error = new Error('File not found');
+      error.status = 404;
+      return next(error);
+    }
+    file.removeFile(err => {
       if (err) return next(err);
       req.flash('success', 'File removed');
       res.redirect('back');
@@ -49,7 +53,7 @@ exports.remove = function (req, res, next) {
 exports.download = function (req, res, next) {
   File.findOne({storageName: req.params.storageName}, (err, file) => {
     if (err) return next(err);
-    if (!file) return next(new Error('File not found'));
+    if (!file) return next();
     const filePath = file.filePath();
     debug('file path: ' + filePath);
     res.download(filePath, file.name);

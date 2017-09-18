@@ -12,8 +12,8 @@ const TOKEN_DURATION = 6 * 60 * 60 * 1000; // 6 hours
 // http://mongoosejs.com/docs/validation.html
 
 const userSchema = new mongoose.Schema({
-  username: {type: String, required: 'Username is required', unique: true},
-  email: {type: String, required: 'Email is required', unique: true},
+  username: {type: String, trim: true, required: 'Username is required', unique: true},
+  email: {type: String, trim: true, required: 'Email is required', unique: true},
   password: {type: String, required: 'Password is required'},
   resetPasswordToken: String,
   resetPasswordExpires: Date,

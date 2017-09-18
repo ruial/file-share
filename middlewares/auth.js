@@ -16,7 +16,7 @@ exports.setup = function (app) {
 
   passport.use(new LocalStrategy(
     (username, password, done) => {
-      User.findOne({username: username}, (err, user) => {
+      User.findOne({username: username.trim()}, (err, user) => {
         if (err) return done(err);
         if (!user) return done(null, false, {message: INVALID_LOGIN_MESSAGE});
         user.verifyPassword(password, (err, isMatch) => {

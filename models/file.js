@@ -9,13 +9,11 @@ const fileSchema = new mongoose.Schema({
   name: {type: String, required: 'File name is required'},
   size: {type: Number, min: 0},
   uploadDate: {type: Date, default: Date.now, index: true},
-  author: {type: String, required: 'Author username is required'},
+  author: {type: String, required: 'Author username is required', index: true},
   storageName: {type: String, required: 'Storage name is required'}
 });
 
-fileSchema.methods.removeFile = function (username, callback) {
-  // use nextTick to make this method always behave asynchronously
-  if (this.author !== username) return process.nextTick(() => callback(new Error('Wrong author')));
+fileSchema.methods.removeFile = function (callback) {
   this.remove(err => {
     if (err) return callback(err);
     callback(null); // when file is removed from database don't wait for the trade removals and file deletion
