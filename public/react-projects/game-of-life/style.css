@@ -1,0 +1,27 @@
+body{
+    background-color: lightgrey;
+    text-align: center;
+}
+
+.cell{
+    width: 15px;
+    height: 15px;
+    float: left;
+    border: 1px solid grey;
+}
+
+.black{
+    background-color: black;
+}
+
+.white{
+    background-color: white;
+}
+
+.clear{
+    clear: both;
+}
+
+.button-list{
+    margin: 20px;
+}

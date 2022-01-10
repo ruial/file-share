@@ -1,0 +1,12 @@
+.table th{
+    background-color: #eee;
+}
+
+.sortable{
+    background-color: #eee;
+    cursor: pointer;
+}
+
+.sortable:active{
+    background-color: #ddd
+}

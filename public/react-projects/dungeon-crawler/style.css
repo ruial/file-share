@@ -1,0 +1,41 @@
+.newline{
+    clear:both;
+}
+
+.empty, .wall, .player, .weapon, .enemy, .health, .teleport, .dark{
+    width: 10px;
+    height: 10px;
+    float: left;
+}
+
+.empty{
+    background-color: white;
+}
+
+.wall{
+    background-color: gray;
+}
+
+.player{
+    background-color: blue;
+}
+
+.weapon{
+    background-color: orange;
+}
+
+.enemy{
+    background-color: red;
+}
+
+.health{
+    background-color: green;
+}
+
+.teleport{
+    background-color: purple;
+}
+
+.dark{
+    background-color: black;
+}
